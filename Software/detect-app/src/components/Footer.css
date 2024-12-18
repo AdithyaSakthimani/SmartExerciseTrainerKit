@@ -1,0 +1,21 @@
+.footer {
+    margin-top: 2rem; /* equivalent to mt-8 */
+    background-color: white;
+    border-top: 1px solid #e5e7eb; /* equivalent to border-t */
+  }
+  
+  .footer .container {
+    max-width: 80rem; /* equivalent to max-w-7xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem; /* equivalent to px-4 */
+    padding-right: 1rem; /* equivalent to px-4 */
+    padding-top: 1.5rem; /* equivalent to py-6 */
+    padding-bottom: 1.5rem; /* equivalent to py-6 */
+  }
+  
+  .footer .text {
+    text-align: center;
+    color: #6b7280; /* equivalent to text-gray-500 */
+  }
+  
