@@ -1,28 +1,134 @@
-/* App Container */
-.app-container {
-  min-height: 100vh; /* equivalent to min-h-screen */
-  background-color: #f3f4f6; /* equivalent to bg-gray-100 */
+
+.main-file{
+background-image: url('./images/WhatsApp\ Image\ 2024-12-27\ at\ 11.04.16\ \(1\).jpeg');
+background-size: cover;
+background-repeat: no-repeat;
+ display: flex;
+ align-items: center; 
+ justify-content: center;
+ margin-top: 50px;
+ padding-left: 10px;
+ padding-bottom: 40px;
 }
 
-/* Main Content */
-.main-content {
-  max-width: 80rem; /* equivalent to max-w-7xl */
-  margin-left: auto; /* equivalent to mx-auto */
-  margin-right: auto; /* equivalent to mx-auto */
-  padding: 2rem 1rem; /* equivalent to px-4 py-8 sm:px-6 lg:px-8 */
+.app {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+  max-width: 800px;
+  margin: auto;
+  align-self: center;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.feedback-area{
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.feedback-button{
+  border-radius: 8px;
+  padding: 10px;
+  margin-left: 5px;
+  background-color: #5a65c8;
+  transition: background-color 0.3s ease;
+  color: white;
+  font-size: large;
+}
+.feedback-button:hover , .setgoal-button:hover{
+  background-color: #2764af;
+}
+.setgoal-button{
+  border-radius: 8px;
+  padding: 10px;
+  margin-left: 5px;
+  background-color: #5a65c8;
+  transition: background-color 0.3s ease;
+  color: white;
+  font-size: large;
+}
+.header-txt {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: white;
 }
 
-/* Exercise Box */
-.exercise-box {
-  background-color: #ffffff; /* equivalent to bg-white */
-  border-radius: 0.5rem; /* equivalent to rounded-lg */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* equivalent to shadow-lg */
-  padding: 1.5rem; /* equivalent to p-6 */
+.button-container {
+  margin-bottom: 20px;
 }
 
-/* Title */
-.title {
-  font-size: 1.25rem; /* equivalent to text-xl */
-  font-weight: 600; /* equivalent to font-semibold */
-  margin-bottom: 1.5rem; /* equivalent to mb-6 */
+.start-button, .end-button {
+  padding: 15px 25px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+.start-button {
+  background-color: #4CAF50;
+  color: white;
+  margin-right: 10px;
+}
+
+.start-button:disabled {
+  background-color: #90EE90;
+}
+
+.end-button {
+  background-color: #FF5733;
+  color: white;
+}
+
+.end-button:disabled {
+  background-color: #FFB3AB;
+}
+
+.status-msg {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.about-section {
+  text-align: left;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-top: 2px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.about-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.about-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.about-section ul li {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.about-section ul li::before {
+  content: "• ";
+  color: #FF5733;
+  font-size: 1.5rem;
+  margin-right: 8px;
+}
+
+.status-msg{
+  color: white;
 }

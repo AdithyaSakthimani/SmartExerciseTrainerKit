@@ -1,0 +1,88 @@
+/* Apply box-sizing for all elements */
+* {
+  box-sizing: border-box;
+}
+
+/* Basic styles for body */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* Link styles */
+.link1 {
+  text-decoration: none;
+  color: white;
+}
+
+/* Styling for the header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px; 
+  position: fixed !important;
+  top: 0px !important;
+  z-index: 1000 !important; 
+  width: 100%;
+}
+
+/* Logo styling */
+.logo {
+  font-size: 24px;
+  color: white;
+  font-weight: bold;
+}
+
+
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  margin-right: 15px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.navbar a:hover {
+  cursor: pointer; 
+  text-decoration: none;/* Change color on hover */
+}
+
+/* Styling for the user info section when logged in */
+.user-info {
+  display: flex;
+  align-items: center;
+}
+.logout-button{
+  margin-right: 15px;
+  border-radius: 8px;
+  background-color: #4CAF50;
+}
+.logout-button:hover{
+  transform: scale(1.1);
+}
+/* Styling for the user icon (first letter of the username) */
+.user-icon {
+  background-color: #4CAF50; /* Icon background color */
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Username text styling */
+.username {
+  font-size: 16px;
+  font-weight: 500;
+}

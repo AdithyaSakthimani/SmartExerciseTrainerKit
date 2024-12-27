@@ -3,15 +3,38 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import NoteState from './components/NoteState';
+import {
+  HashRouter as Router,
+  Route,
+  Routes,
+} from 'react-router-dom';
+import HomePage from './components/HomePage';
+import LoginPage from './components/LoginPage';
+import SignUpPage from './components/SignUpPage';
+import Navbar from './components/Navbar';
+import FeedbackPage from './components/Feedbackpage';
+import WorkoutCalculator from './components/WorkoutCalculator';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <App />
+    <NoteState>
+      <Router>
+        {/* Navbar should be outside of Routes to be rendered on all pages */}
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/tracker" element={<App />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/Summary" element={<FeedbackPage />} />
+          <Route path="/Goals" element={<WorkoutCalculator />} />
+        </Routes>
+      </Router>
+    </NoteState>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

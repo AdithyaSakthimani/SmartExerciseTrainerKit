@@ -1,0 +1,64 @@
+/* feedbackstyle.css */
+
+.feedback-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .feedback-header {
+    text-align: center;
+    margin-top: 60px;
+    color: #3a1f73;
+  }
+  
+  .new-feedback-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .new-feedback-button:hover {
+    background-color: #45a049;
+  }
+  
+  .feedback-loading {
+    text-align: center;
+    font-style: italic;
+  }
+  
+  .feedback-error {
+    color: red;
+    text-align: center;
+  }
+  
+  .feedback-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+  
+  .feedback-card-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #555;
+  }
+  
+  .feedback-message {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+  }
+  
