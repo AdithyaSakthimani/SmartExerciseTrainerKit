@@ -20,7 +20,7 @@ function FeedbackPage() {
       })
       .then((response) => {
         console.log('Summary fetched:', response.data);
-        setSummary(response.data); // Assume response.data is an array
+        setSummary(response.data); 
         setLoading(false); // Stop loading after success
       })
       .catch((error) => {
@@ -57,6 +57,13 @@ function FeedbackPage() {
             </p>
             <p>
               <strong>Squats:</strong> {obj.SquatCnt}
+            </p>
+            <p>
+              <strong>Plank Time :</strong> {obj.PlankTime}
+            </p>
+            <p>
+              <strong>Jumping Jacks :</strong> {obj.JumpingJackCnt}
+
             </p>
           </div>
         ))

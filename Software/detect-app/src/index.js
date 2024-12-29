@@ -14,7 +14,7 @@ import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import Navbar from './components/Navbar';
 import FeedbackPage from './components/Feedbackpage';
-import WorkoutCalculator from './components/WorkoutCalculator';
+import WorkoutTodo from './components/WorkoutTodo';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -30,7 +30,7 @@ root.render(
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/Summary" element={<FeedbackPage />} />
-          <Route path="/Goals" element={<WorkoutCalculator />} />
+          <Route path="/Goals" element={<WorkoutTodo />} />
         </Routes>
       </Router>
     </NoteState>

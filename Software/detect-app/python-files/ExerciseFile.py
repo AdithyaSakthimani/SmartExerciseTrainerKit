@@ -32,6 +32,14 @@ if 'stage_right' not in st.session_state:
     st.session_state.stage_right = None
 if 'stage_squat' not in st.session_state:
     st.session_state.stage_squat = None
+if 'stage_plank' not in st.session_state:
+    st.session_state.stage_plank = None
+if 'stage_jumping_jack' not in st.session_state:
+    st.session_state.stage_jumping_jack = None
+if 'plank_time' not in st.session_state:
+    st.session_state.plank_time = 0
+if 'jumping_jack_counter' not in st.session_state:
+    st.session_state.jumping_jack_counter = 0
 
 # Username input
 username = st.text_input("Enter your username:", "")
@@ -56,6 +64,8 @@ def save_exercise_summary():
         'BicepCurlCnt': total_bicep_curls,
         'SquatCnt': st.session_state.Squat_counter,
         'PushUpCnt': st.session_state.pushup_counter,
+        'PlankTime': st.session_state.plank_time,
+        'JumpingJackCnt': st.session_state.jumping_jack_counter,
         'timestamp': datetime.now()
     }
     
@@ -69,7 +79,8 @@ def save_exercise_summary():
         return False
 
 # Setup Mediapipe instance
-selectExercise = st.selectbox("Select Exercise", ['Bicep Curl', 'Squats', 'push-ups'])
+selectExercise = st.selectbox("Select an Exercise",
+                               ['Bicep Curl', 'Squats', 'Push-ups', 'Plank', 'Jumping Jacks'])
 st.title(f"Selected Exercise: {selectExercise}")
 
 # Control buttons
@@ -114,7 +125,7 @@ else:
         # Create video frame placeholder
         frame_placeholder = right_col.empty()
         
-        with mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.7) as pose:
+        with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
             while cap.isOpened():
                 ret, frame = cap.read()
 
@@ -215,10 +226,76 @@ else:
                             cv2.putText(image, str(st.session_state.pushup_counter), (10, 60),
                                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
+                        
+                        elif selectExercise == 'Plank' :
+                        # Maintain straight body angle > 170
+                            hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+                               landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+                            shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+                                    landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+                            ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
+                                 landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+
+                            angle_plank = calculate_angle(hip, shoulder, ankle)
+
+                            if angle_plank > 170:
+                                st.session_state.stage_plank = "straight"
+                                st.session_state.plank_time += 1  # Increment plank time
+                            else:
+                                st.session_state.stage_plank = "not straight"
+
+                            cv2.putText(image, f"Plank Time: {st.session_state.plank_time} sec",
+                                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+
+
+                        elif selectExercise == 'Jumping Jacks':
+
+                        # Jumping jacks based on arm and leg spread
+
+                            left_hand = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
+
+                                     landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+
+                            right_hand = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
+
+                                      landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+
+                            left_foot = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
+
+                                     landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+
+                            right_foot = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
+
+                                      landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
+
+                        # Calculate arm and leg spreads
+
+                            arm_spread = np.abs(left_hand[0] - right_hand[0])  # Horizontal spread for arms
+
+                            leg_spread = np.abs(left_foot[0] - right_foot[0])  # Horizontal spread for legs
+
+                            print(f"Arm Spread: {arm_spread}, Leg Spread: {leg_spread}, Stage: {st.session_state.stage_jumping_jack}")
+
+                        # Adjust thresholds as needed
+
+                            if arm_spread > 0.3 and leg_spread > 0.2:  # Adjust based on testing
+
+                                st.session_state.stage_jumping_jack = "open"
+
+                            if arm_spread < 0.15 and leg_spread < 0.15 and st.session_state.stage_jumping_jack == "open":
+                                st.session_state.stage_jumping_jack = "close"
+
+                                st.session_state.jumping_jack_counter += 1
+
+                        # Display jumping jack count
+
+                            cv2.putText(image, f"Jumping Jacks: {st.session_state.jumping_jack_counter}",
+
+                                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+                        
                         mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                                   mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                                   mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-                        
                         # Update stats
                         placeholder_stats.write(f"""
                         Total Bicep Curls: {st.session_state.bicep_counter_left + st.session_state.bicep_counter_right}
@@ -228,8 +305,6 @@ else:
                         
                     except Exception as e:
                         st.error(f"Error processing video frame: {str(e)}")
-                else:
-                    st.warning("Pose landmarks not detected in this frame")
 
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 frame_placeholder.image(image, channels="RGB", use_container_width=True)
@@ -248,6 +323,8 @@ if st.session_state.workout_finished:
     st.write(f"Total Bicep Curls: {st.session_state.bicep_counter_left + st.session_state.bicep_counter_right}")
     st.write(f"Squats: {st.session_state.Squat_counter}")
     st.write(f"Push-ups: {st.session_state.pushup_counter}")
+    st.write(f"Plank Time: {st.session_state.plank_time}")
+    st.write(f"Jumping Jacks : {st.session_state.jumping_jack_counter}")
 
 # Add a reset button
 if st.button("Reset Workout"):
@@ -260,4 +337,7 @@ if st.button("Reset Workout"):
     st.session_state.stage_left = None
     st.session_state.stage_right = None
     st.session_state.stage_squat = None
+    st.session_state.plank_time = 0; 
+    st.session_state.jumping_jack_counter=0; 
+    st.session_state.stage_jumping_jack = None
     st.experimental_rerun()

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import {authData ,feedbacks } from "./new_database.js"; 
+import {authData ,feedbacks,goalData } from "./new_database.js"; 
 
 const uri = "mongodb+srv://MidnightGamer:Tester123@cluster0.wqmrn.mongodb.net/ChatSpace?retryWrites=true&w=majority&appName=Cluster0";
 
@@ -90,6 +90,32 @@ app.post("/Summary", async (req, res) => {
     res.status(500).json({ error: "Error fetching workout summaries." });
   }
 });
+app.post("/GetGoals", async (req, res) => {
+  const { username, goals } = req.body;
+
+  if (!username || !Array.isArray(goals) || goals.length === 0) {
+    return res.status(400).json({ error: "Username and valid goals are required." });
+  }
+
+  try {
+    const goalToInsert = goals[goals.length -1 ] ; 
+    const newGoal = new goalData({
+      username:username,
+      exerciseName:goalToInsert.exercise,
+      exerciseCnt:goalToInsert.target,
+      caloriesToBurn:goalToInsert.calories,
+      completed:goalToInsert.completed,
+    });
+    const savedGoal = await newGoal.save();
+    res.status(201).json({ message: "Goals added successfully."  , goalSaved : savedGoal});
+  } catch (error) {
+    console.error("Error adding goals:", error);
+    res.status(500).json({ error: "Error adding goals." });
+  }
+});
+
+
+
 
 // Start the Server
 app.listen(PORT, async () => {

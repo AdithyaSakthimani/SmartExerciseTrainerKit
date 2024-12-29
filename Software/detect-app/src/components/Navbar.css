@@ -55,6 +55,17 @@ body {
 }
 
 /* Styling for the user info section when logged in */
+.my-logo{
+  width: 55px;
+  height: 55px;
+  align-self: center;
+  
+}
+.left-items{
+  display: flex;
+  column-gap: 5px;
+  align-items: center;
+}
 .user-info {
   display: flex;
   align-items: center;

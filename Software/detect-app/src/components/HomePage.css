@@ -216,4 +216,34 @@
   color: #2c3e50;
   text-align: left;
 }
+/* Hero Section */
+.hero {
+  background-image: url('../images/everything-you-need-know-about-fitness-1440x810.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  padding: 6rem 2rem; /* Increase padding for a larger hero section */
+  position: relative;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem; /* Increase the heading size */
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 10;
+  color: white;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.hero p {
+  font-size: 1.5rem; /* Increase paragraph size */
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 10;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  font-weight: 600;
+}
 

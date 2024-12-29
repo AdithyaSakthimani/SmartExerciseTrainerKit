@@ -3,7 +3,7 @@ import './HomePage.css';
 import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import NoteContext from './NoteContext';
-
+import myLogo from '../images/pngtree-running-athlete-logo-on-white-paper-vector-png-image_7210846.png'
 function Navbar() {
   const { globalUsername, setGLobalUsername } = useContext(NoteContext);
   const navigate = useNavigate(); // Hook to navigate after logout
@@ -22,8 +22,11 @@ function Navbar() {
   return (
     <div>
       <header className="header">
-        <Link to="/" className="link1">
+        <Link to="/" onClick={()=>window.scrollTo({ top: 0, behavior: 'smooth' })} className="link1">
+          <div className='left-items'>
+          <img src={myLogo} className='my-logo'/>
           <div className="logo">Elevate Fitness AI</div>
+          </div>
         </Link>
         <nav className="navbar">
           {globalUsername ? (

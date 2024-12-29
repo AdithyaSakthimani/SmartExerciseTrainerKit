@@ -18,13 +18,17 @@ const feedbackSchema = new mongoose.Schema({
     BicepCurlCnt: Number,
     SquatCnt: Number,
     PushUpCnt: Number,
+    PlankTime:Number,
+    JumpingJackCnt:Number,
     timestamp: Date,
   });
-const feedbacksSchema = new mongoose.Schema({
-    username: String,
-    age: Number,
-  });
-  
-
- export const authData = mongoose.model("authData" , authSchema)
+ const goalSchema = new mongoose.Schema({
+    username:String,
+    exerciseName:String,
+    exerciseCnt:Number,
+    caloriesToBurn:Number,
+    completed:Boolean,
+ });
+ export const authData = mongoose.model("authData" , authSchema);
  export const feedbacks = mongoose.model("feedbacks" , feedbackSchema);
+ export const goalData = mongoose.model("goalData",goalSchema);
