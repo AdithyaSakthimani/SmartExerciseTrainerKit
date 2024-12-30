@@ -223,9 +223,11 @@
   background-position: center;
   background-repeat: no-repeat;
   color: white;
-  padding: 6rem 2rem; /* Increase padding for a larger hero section */
+  padding: 8rem 2rem; /* Increase padding for a larger hero section */
   position: relative;
   text-align: center;
+  border-bottom-right-radius:8px ;
+  border-bottom-left-radius:8px ;
 }
 
 .hero h1 {

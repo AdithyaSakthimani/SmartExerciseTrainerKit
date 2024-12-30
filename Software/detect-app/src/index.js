@@ -15,6 +15,7 @@ import SignUpPage from './components/SignUpPage';
 import Navbar from './components/Navbar';
 import FeedbackPage from './components/Feedbackpage';
 import WorkoutTodo from './components/WorkoutTodo';
+import WorkoutSensorData from './components/WorkoutSensorData';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -31,6 +32,7 @@ root.render(
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/Summary" element={<FeedbackPage />} />
           <Route path="/Goals" element={<WorkoutTodo />} />
+          <Route path="/SensorData" element={<WorkoutSensorData />} />
         </Routes>
       </Router>
     </NoteState>

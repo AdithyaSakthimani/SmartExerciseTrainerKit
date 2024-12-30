@@ -98,6 +98,9 @@ const APP = () => {
           <Link to="/Summary">
             <button className="feedback-button">📊 Get Your Workout Summary</button>
           </Link>
+          <Link to="/SensorData">
+            <button className="feedback-button">📊 Sensor Data</button>
+          </Link>
         </div>
 
         {/* Status Message */}

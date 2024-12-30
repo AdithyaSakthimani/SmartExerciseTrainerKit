@@ -29,6 +29,7 @@ const feedbackSchema = new mongoose.Schema({
     caloriesToBurn:Number,
     completed:Boolean,
  });
+ 
  export const authData = mongoose.model("authData" , authSchema);
  export const feedbacks = mongoose.model("feedbacks" , feedbackSchema);
  export const goalData = mongoose.model("goalData",goalSchema);

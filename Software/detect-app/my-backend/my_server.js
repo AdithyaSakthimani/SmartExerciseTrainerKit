@@ -3,12 +3,10 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import {authData ,feedbacks,goalData } from "./new_database.js"; 
-
 const uri = "mongodb+srv://MidnightGamer:Tester123@cluster0.wqmrn.mongodb.net/ChatSpace?retryWrites=true&w=majority&appName=Cluster0";
 
 const app = express();
 const PORT = process.env.PORT || 8001;
-
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -90,31 +88,124 @@ app.post("/Summary", async (req, res) => {
     res.status(500).json({ error: "Error fetching workout summaries." });
   }
 });
-app.post("/GetGoals", async (req, res) => {
-  const { username, goals } = req.body;
+app.post("/addGoal", async (req, res) => {
+  const { username, goal } = req.body;
 
-  if (!username || !Array.isArray(goals) || goals.length === 0) {
-    return res.status(400).json({ error: "Username and valid goals are required." });
+  // Validate inputs
+  if (!username || !goal || !goal.exercise || !goal.target || !goal.calories) {
+    return res.status(400).json({ error: "Username and valid goal data are required." });
   }
 
   try {
-    const goalToInsert = goals[goals.length -1 ] ; 
+    // Create a new goal document
     const newGoal = new goalData({
-      username:username,
-      exerciseName:goalToInsert.exercise,
-      exerciseCnt:goalToInsert.target,
-      caloriesToBurn:goalToInsert.calories,
-      completed:goalToInsert.completed,
+      username: username,
+      exerciseName: goal.exercise,
+      exerciseCnt: goal.target,
+      caloriesToBurn: goal.calories,
+      completed: goal.completed || false, // Default to false if not provided
     });
+
+    // Save the new goal to the database
     const savedGoal = await newGoal.save();
-    res.status(201).json({ message: "Goals added successfully."  , goalSaved : savedGoal});
+
+    // Respond with the saved goal and its ID
+    res.status(201).json({
+      message: "Goal added successfully.",
+      goalSaved: savedGoal,
+      id: savedGoal._id,
+    });
   } catch (error) {
-    console.error("Error adding goals:", error);
-    res.status(500).json({ error: "Error adding goals." });
+    console.error("Error adding goal:", error);
+    res.status(500).json({ error: "Error adding goal." });
   }
 });
+app.post("/UpdateGoal",async(req,res)=>{
+  const {id, completed } = req.body ; 
+  if (!id || completed === undefined) {
+    return res.status(400).json({ error: "ID and completed status are required." });
+  }
+  try {
+    const updatedGoal = await goalData.findByIdAndUpdate(
+      id, 
+      { completed: completed }, 
+      { new: true } 
+    );
 
+    if (!updatedGoal) {
+      return res.status(404).json({ error: "Goal not found." });
+    }
 
+    // Send the updated goal back in the response
+    res.status(200).json({
+      message: "Goal updated successfully.",
+      updatedGoal: updatedGoal, // Send the updated goal
+    });
+  } catch (error) {
+    console.error("Error updating goal:", error);
+    res.status(500).json({ error: "Error updating goal." });
+  }
+})
+app.post("/DeleteGoal", async (req, res) => {
+  const { id } = req.body; // Get the goal ID from the request body
+
+  if (!id) {
+    return res.status(400).json({ error: "ID is required." });
+  }
+
+  try {
+    // Find the goal by its _id and delete it
+    const deletedGoal = await goalData.findByIdAndDelete(id);
+
+    if (!deletedGoal) {
+      return res.status(404).json({ error: "Goal not found." });
+    }
+
+    // Send a success response
+    res.status(200).json({
+      message: "Goal deleted successfully.",
+      deletedGoal: deletedGoal, // Send the deleted goal (optional)
+    });
+  } catch (error) {
+    console.error("Error deleting goal:", error);
+    res.status(500).json({ error: "Error deleting goal." });
+  }
+});
+app.post('/getgoals', async (req, res) => {
+  const { username } = req.body; // Get username from request body
+
+  if (!username) {
+    return res.status(400).json({ error: "Username is required." });
+  }
+
+  try {
+    // Fetch goals for the provided username
+    const goals = await goalData.find({ username });
+
+    if (goals.length === 0) {
+      return res.status(404).json({ message: "No goals found for this username." });
+    }
+
+    // Send the goals as response
+    res.status(200).json({ goals });
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+    res.status(500).json({ error: "Error fetching goals." });
+  }
+});
+let sensorData = {}; // In-memory storage
+
+app.post('/sensordata', (req, res) => {
+  const { temperature, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, heart_rate, spo2 } = req.body;
+  sensorData = { temperature, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, heart_rate, spo2 };
+  console.log("Received sensor data:", req.body);
+  res.send('Data received successfully!');
+});
+
+app.get('/getsensordata', (req, res) => {
+  // Send the most recent sensor data
+  res.json(sensorData);
+});
 
 
 // Start the Server
