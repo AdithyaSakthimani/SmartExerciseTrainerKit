@@ -6,11 +6,11 @@
 #include <ArduinoJson.h>
 
 // WiFi credentials
-const char* ssid = "Redmi Note 11 Pro+ 5G";
-const char* password = "12345678@";
+const char* ssid = "Your Wifi Username";
+const char* password = "Your Wifi Password";
 
 // Server URL
-const char* serverUrl = "http://192.168.219.160:8001/sensordata";
+const char* serverUrl = "http://<your-ip-address>:8001/sensordata";
 
 // Create MPU6050 object
 Adafruit_MPU6050 mpu;
