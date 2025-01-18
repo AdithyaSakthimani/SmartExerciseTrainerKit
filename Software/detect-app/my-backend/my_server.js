@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import {authData ,feedbacks,goalData } from "./new_database.js"; 
+import {authData ,feedbacks,goalData,sensorDatas } from "./new_database.js"; 
 const uri = "mongodb+srv://MidnightGamer:Tester123@cluster0.wqmrn.mongodb.net/ChatSpace?retryWrites=true&w=majority&appName=Cluster0";
 
 const app = express();
@@ -193,11 +193,66 @@ app.post('/getgoals', async (req, res) => {
     res.status(500).json({ error: "Error fetching goals." });
   }
 });
-let sensorData = {}; // In-memory storage
+app.post('/sendSensorData', async (req, res) => {
+  try {
+    const { username, duration, temperature, averageHeartBeat, caloriesBurned } = req.body;
 
+    // Validate required fields
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    const newSensorData = new sensorDatas({
+      username,
+      duration: duration || 0,
+      temperature: temperature || 0,
+      caloriesBurned: caloriesBurned || 0,
+      averageHeartBeat: averageHeartBeat || 0,
+    });
+
+    const savedData = await newSensorData.save();
+    res.status(201).json({ message: 'Sensor data saved successfully', data: savedData });
+  } catch (error) {
+    console.error('Error saving sensor data:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+app.post('/getSensorSummary', async (req, res) => {
+  const { username } = req.body;
+
+  if (!username) {
+    return res.status(400).json({ error: "Username is required." });
+  }
+
+  try {
+    // Find all sensor data for the given username
+    const sensorData = await sensorDatas.find({ username })
+      .sort({ _id: -1 }) // Sort by newest first
+      .exec();
+
+    if (!sensorData || sensorData.length === 0) {
+      return res.status(404).json({ message: "No sensor data found for this user." });
+    }
+
+    res.status(200).json({ sensorData });
+  } catch (error) {
+    console.error('Error fetching sensor data:', error);
+    res.status(500).json({ error: "Error fetching sensor data." });
+  }
+});
+let my_globalUsername = '' ; 
+app.post('/sendUsername' , async(req,res)=>{
+  const {username} = req.body;
+  console.log(username) ; 
+  my_globalUsername = username ;
+})
+app.get('/getUsername' , (req,res)=>{
+  res.json({username: my_globalUsername});
+})
+let sensorData = {}; // In-memory storage
 app.post('/sensordata', (req, res) => {
-  const { temperature, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, heart_rate, spo2 } = req.body;
-  sensorData = { temperature, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, heart_rate, spo2 };
+  const { temperature, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z,NodemCuData } = req.body;
+  sensorData = { temperature, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, NodemCuData};
   console.log("Received sensor data:", req.body);
   res.send('Data received successfully!');
 });
@@ -206,7 +261,6 @@ app.get('/getsensordata', (req, res) => {
   // Send the most recent sensor data
   res.json(sensorData);
 });
-
 
 // Start the Server
 app.listen(PORT, async () => {

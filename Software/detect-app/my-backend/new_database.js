@@ -18,7 +18,7 @@ const feedbackSchema = new mongoose.Schema({
     BicepCurlCnt: Number,
     SquatCnt: Number,
     PushUpCnt: Number,
-    PlankTime:Number,
+    CrunchCnt:Number,
     JumpingJackCnt:Number,
     timestamp: Date,
   });
@@ -29,7 +29,15 @@ const feedbackSchema = new mongoose.Schema({
     caloriesToBurn:Number,
     completed:Boolean,
  });
+ const sensorSchema = new mongoose.Schema({
+    username:String,
+    duration:Number,
+    temperature:Number,
+    caloriesBurned:Number,
+    averageHeartBeat:Number,
+ });
  
  export const authData = mongoose.model("authData" , authSchema);
  export const feedbacks = mongoose.model("feedbacks" , feedbackSchema);
  export const goalData = mongoose.model("goalData",goalSchema);
+ export const sensorDatas = mongoose.model("sensorData",sensorSchema);

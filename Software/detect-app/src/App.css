@@ -2,9 +2,6 @@ body{
   background-color: aliceblue;
 }
 .main-file{
-background-image: url('./images/WhatsApp\ Image\ 2024-12-27\ at\ 11.04.16\ \(1\).jpeg');
-background-size: cover;
-background-repeat: no-repeat;
  display: flex;
  align-items: center; 
  justify-content: center;
@@ -55,7 +52,6 @@ background-repeat: no-repeat;
 .header-txt {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: white;
 }
 
 .button-container {
@@ -73,7 +69,6 @@ background-repeat: no-repeat;
 
 .start-button {
   background-color: #4CAF50;
-  color: white;
   margin-right: 10px;
 }
 
@@ -83,7 +78,6 @@ background-repeat: no-repeat;
 
 .end-button {
   background-color: #FF5733;
-  color: white;
 }
 
 .end-button:disabled {
@@ -131,7 +125,6 @@ background-repeat: no-repeat;
   font-size: 1.5rem;
   margin-right: 8px;
 }
-
-.status-msg{
-  color: white;
+.exercise{
+  color:black
 }

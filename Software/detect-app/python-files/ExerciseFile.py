@@ -4,7 +4,12 @@ import mediapipe as mp
 import numpy as np
 import pymongo
 from datetime import datetime
-
+import warnings
+import os
+import requests
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+# Suppress warnings
+warnings.filterwarnings("ignore")
 # MongoDB connection setup
 uri = "mongodb+srv://MidnightGamer:Tester123@cluster0.wqmrn.mongodb.net/ChatSpace?retryWrites=true&w=majority&appName=Cluster0"
 client = pymongo.MongoClient(uri)
@@ -32,18 +37,21 @@ if 'stage_right' not in st.session_state:
     st.session_state.stage_right = None
 if 'stage_squat' not in st.session_state:
     st.session_state.stage_squat = None
-if 'stage_plank' not in st.session_state:
-    st.session_state.stage_plank = None
+if 'stage_crunch' not in st.session_state:
+    st.session_state.stage_crunch = None
 if 'stage_jumping_jack' not in st.session_state:
     st.session_state.stage_jumping_jack = None
-if 'plank_time' not in st.session_state:
-    st.session_state.plank_time = 0
+if 'crunch_count' not in st.session_state:
+    st.session_state.crunch_counter = 0
 if 'jumping_jack_counter' not in st.session_state:
     st.session_state.jumping_jack_counter = 0
-
-# Username input
-username = st.text_input("Enter your username:", "")
-
+def get_user():
+    url = "http://localhost:8001/getUsername"
+    response = requests.get(url)
+    data = response.json()
+    print(data['username']) 
+    return data['username']
+username = get_user() or st.text_input("Enter your username", "")
 def calculate_angle(a, b, c):
     a = np.array(a)  # First
     b = np.array(b)  # Mid
@@ -64,9 +72,9 @@ def save_exercise_summary():
         'BicepCurlCnt': total_bicep_curls,
         'SquatCnt': st.session_state.Squat_counter,
         'PushUpCnt': st.session_state.pushup_counter,
-        'PlankTime': st.session_state.plank_time,
+        'CrunchCnt': st.session_state.crunch_counter,
         'JumpingJackCnt': st.session_state.jumping_jack_counter,
-        'timestamp': datetime.now()
+        'timestamp': datetime.now().date().isoformat()
     }
     
     try:
@@ -80,7 +88,7 @@ def save_exercise_summary():
 
 # Setup Mediapipe instance
 selectExercise = st.selectbox("Select an Exercise",
-                               ['Bicep Curl', 'Squats', 'Push-ups', 'Plank', 'Jumping Jacks'])
+                               ['Bicep Curl', 'Squats', 'Push-ups', 'Crunches', 'Jumping Jacks'])
 st.title(f"Selected Exercise: {selectExercise}")
 
 # Control buttons
@@ -221,36 +229,39 @@ else:
                                 st.session_state.stage_pushup = "down"
                                 st.session_state.pushup_counter += 1
 
-                            cv2.putText(image, 'PUSH-UPS', (10, 20),
+                            cv2.putText(image, 'Push-Ups', (240, 20),
                                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                            cv2.putText(image, str(st.session_state.pushup_counter), (10, 60),
+                            cv2.putText(image, str(st.session_state.pushup_counter), (240, 60),
                                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
                         
-                        elif selectExercise == 'Plank' :
-                        # Maintain straight body angle > 170
+                        elif selectExercise == 'Crunches':
                             hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
-                               landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+                                        landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
                             shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                                    landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-                            ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
-                                 landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+                                        landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+                            knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
+                                landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
 
-                            angle_plank = calculate_angle(hip, shoulder, ankle)
+   
+                            angle_crunch = calculate_angle(shoulder, hip, knee)
+                            print(f"crunch_angle: {angle_crunch}")
 
-                            if angle_plank > 170:
-                                st.session_state.stage_plank = "straight"
-                                st.session_state.plank_time += 1  # Increment plank time
-                            else:
-                                st.session_state.stage_plank = "not straight"
+                            if angle_crunch > 120: 
+                                st.session_state.stage_crunch = "down"
+                            elif angle_crunch < 90 and st.session_state.stage_crunch == "down":  
+                                st.session_state.stage_crunch = "up"
+                                st.session_state.crunch_counter += 1  
 
-                            cv2.putText(image, f"Plank Time: {st.session_state.plank_time} sec",
-                                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+                            cv2.putText(image, 'Crunches:', (240, 20),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                            cv2.putText(image, str(st.session_state.crunch_counter), (240, 60),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
 
 
                         elif selectExercise == 'Jumping Jacks':
 
-                        # Jumping jacks based on arm and leg spread
 
                             left_hand = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
 
@@ -268,30 +279,28 @@ else:
 
                                       landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
 
-                        # Calculate arm and leg spreads
 
                             arm_spread = np.abs(left_hand[0] - right_hand[0])  # Horizontal spread for arms
 
                             leg_spread = np.abs(left_foot[0] - right_foot[0])  # Horizontal spread for legs
 
-                            print(f"Arm Spread: {arm_spread}, Leg Spread: {leg_spread}, Stage: {st.session_state.stage_jumping_jack}")
 
-                        # Adjust thresholds as needed
 
-                            if arm_spread > 0.3 and leg_spread > 0.2:  # Adjust based on testing
+                            if arm_spread > 0.2 and leg_spread > 0.18:  # Adjust based on testing
 
                                 st.session_state.stage_jumping_jack = "open"
 
-                            if arm_spread < 0.15 and leg_spread < 0.15 and st.session_state.stage_jumping_jack == "open":
+                            if arm_spread < 0.18 and leg_spread < 0.15 and st.session_state.stage_jumping_jack == "open":
                                 st.session_state.stage_jumping_jack = "close"
 
                                 st.session_state.jumping_jack_counter += 1
 
                         # Display jumping jack count
 
-                            cv2.putText(image, f"Jumping Jacks: {st.session_state.jumping_jack_counter}",
-
-                                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+                            cv2.putText(image, 'Jumping Jacks ', (240, 20),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                            cv2.putText(image, str(st.session_state.jumping_jack_counter), (240, 60),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
                         
                         mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                                   mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
@@ -301,6 +310,8 @@ else:
                         Total Bicep Curls: {st.session_state.bicep_counter_left + st.session_state.bicep_counter_right}
                         Squats: {st.session_state.Squat_counter}
                         Push-ups: {st.session_state.pushup_counter}
+                        Crunches: {st.session_state.crunch_counter}
+                        Jumping Jacks: {st.session_state.jumping_jack_counter}
                         """)
                         
                     except Exception as e:
@@ -323,7 +334,7 @@ if st.session_state.workout_finished:
     st.write(f"Total Bicep Curls: {st.session_state.bicep_counter_left + st.session_state.bicep_counter_right}")
     st.write(f"Squats: {st.session_state.Squat_counter}")
     st.write(f"Push-ups: {st.session_state.pushup_counter}")
-    st.write(f"Plank Time: {st.session_state.plank_time}")
+    st.write(f"Crunches: {st.session_state.crunch_counter}")
     st.write(f"Jumping Jacks : {st.session_state.jumping_jack_counter}")
 
 # Add a reset button
@@ -337,7 +348,7 @@ if st.button("Reset Workout"):
     st.session_state.stage_left = None
     st.session_state.stage_right = None
     st.session_state.stage_squat = None
-    st.session_state.plank_time = 0; 
+    st.session_state.crunch_counter = 0; 
     st.session_state.jumping_jack_counter=0; 
     st.session_state.stage_jumping_jack = None
     st.experimental_rerun()

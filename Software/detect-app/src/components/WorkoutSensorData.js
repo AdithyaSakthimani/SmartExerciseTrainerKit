@@ -15,10 +15,8 @@ const WorkoutSensorData = () => {
     gyroX: [],
     gyroY: [],
     gyroZ: [],
-    heartRate: [],
-    spo2: [],
   });
-
+  
   // Fetch sensor data from backend
   const fetchSensorData = async () => {
     try {
@@ -35,8 +33,6 @@ const WorkoutSensorData = () => {
           gyroX: [...prevData.gyroX, { x: timestamp, y: data.gyro_x }],
           gyroY: [...prevData.gyroY, { x: timestamp, y: data.gyro_y }],
           gyroZ: [...prevData.gyroZ, { x: timestamp, y: data.gyro_z }],
-          heartRate: [...prevData.heartRate, { x: timestamp, y: data.heart_rate }],
-          spo2: [...prevData.spo2, { x: timestamp, y: data.spo2 }],
         }));
       } else {
         console.error('Failed to fetch sensor data');
@@ -82,10 +78,6 @@ const WorkoutSensorData = () => {
       <Line data={createChartData('Gyro X', sensorData.gyroX)} />
       <Line data={createChartData('Gyro Y', sensorData.gyroY)} />
       <Line data={createChartData('Gyro Z', sensorData.gyroZ)} />
-
-      <h3>Heart Rate & SpO2</h3>
-      <Line data={createChartData('Heart Rate', sensorData.heartRate)} />
-      <Line data={createChartData('SpO2', sensorData.spo2)} />
     </div>
   );
 };
